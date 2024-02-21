@@ -1,17 +1,19 @@
 #!/bin/sh
 set -e
 
-if ! [ $(ls -A1 | wc -l) -eq 0 ] ; then
-	echo "othergrass must be run in an empty directory"
-	exit 1
-fi
-
 if [ $# -lt 2 ] ; then
 	echo "Usage: $0 [the first day to add commits] [the template file]"
 	exit 1
 fi
 
-git init
+if ! [ $(ls -1 | wc -l) -eq 0 ] ; then
+	echo "othergrass must be run in an empty directory"
+	exit 1
+fi
+
+if ! [ -d .git ] ; then
+	git init
+fi
 
 # unix timestamp for noon on that day
 # 43200 is half of one day in seconds
