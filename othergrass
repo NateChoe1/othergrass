@@ -11,17 +11,27 @@ if [ $# -lt 2 ] ; then
 fi
 
 git init
-curr_time="$(date -d "$1" +%s)"
+
+# unix timestamp for noon on that day
+curr_time="$(expr $(date -d "$1" +%s) + 43200)"
+
 grep -o -- . "$2" | while read c ; do
 	if ! printf "%s\n" "$c" | grep -q '[0-9]' ; then
 		continue
 	fi
 
+	touch -- "$curr_time"
+
 	# a 5 in the template means 50 commits on that day, just an arbitrary
 	# decision
-	for i in $(seq $(expr "$c" * 10)) ; do
-		break
+	for i in $(seq $(expr "$c" '*' 10)) ; do
+		tz=$(date -d "1970-01-01 12:00 AM GMT + $curr_time seconds" '+%z')
+		printf "%s\n" "$i" > "$curr_time"
+		git add -A
+		git commit -am 'othergrass'
 	done
+
+	rm -- "$curr_time"
 
 	# 86400 is the number of seconds per day
 	curr_time="$(expr "$curr_time" + 86400)"
