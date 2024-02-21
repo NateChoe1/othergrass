@@ -13,6 +13,7 @@ fi
 git init
 
 # unix timestamp for noon on that day
+# 43200 is half of one day in seconds
 curr_time="$(expr $(date -d "$1" +%s) + 43200)"
 
 grep -o -- . "$2" | while read c ; do
