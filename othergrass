@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if ! [ $(ls -A1 | wc -l) -eq 0 ] ; then
+	echo "othergrass must be run in an empty directory"
+	exit 1
+fi
+
+if [ $# -lt 2 ] ; then
+	echo "Usage: $0 [the first day to add commits] [the template file]"
+	exit 1
+fi
+
+git init
+curr_time="$(date -d "$1" +%s)"
+grep -o -- . "$2" | while read c ; do
+	if ! printf "%s\n" "$c" | grep -q '[0-9]' ; then
+		continue
+	fi
+
+	# a 5 in the template means 50 commits on that day, just an arbitrary
+	# decision
+	for i in $(seq $(expr "$c" * 10)) ; do
+		break
+	done
+
+	# 86400 is the number of seconds per day
+	curr_time="$(expr "$curr_time" + 86400)"
+done
